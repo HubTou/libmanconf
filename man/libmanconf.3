@@ -1,0 +1,71 @@
+.Dd February 28, 2022
+.Dt LIBMANCONF 3
+.Os
+.Sh NAME
+.Nm libmanconf
+.Nd library for handling man(1) and manpath(1) configuration files
+.Sh SYNOPSIS
+.Em import libmanconf
+.Pp
+.Ft String, String, List
+.Fo libmanconf.read_man_conf_files
+.Fa "Integer debug_level = 0"
+.Fc
+.Sh DESCRIPTION
+The
+.Fn read_man_conf_files
+function reads the configuration files located at
+.Pa /etc/man.conf
+and
+.Pa /usr/local/etc/man.d/*.conf
+to configure the manual search path, locales and utility set used by
+.Xr man 1
+and related utilities.
+.Pp
+The function takes an optional argument
+.Fa debug_level
+with an integer value from 0 (default) to 3,
+to print increasingly detailed information on standard error output.
+.Pp
+It returns a triplet consisting of:
+.Bl -bullet
+.It
+a string containing colon separated existing MANPATH directories
+.It
+a string containing colon separated locales (for example, "fr_FR.UTF-8:ja_JP.eucJP")
+.It
+a list containing processors (for example, ["TBL_JA=/usr/local/bin/gtbl", "NROFF_JA=/usr/local/bin/groff -man -dlang=ja_JP.eucJP"])
+.El
+.Sh SEE ALSO
+.Xr apropos 1 ,
+.Xr man 1 ,
+.Xr man.conf 5 ,
+.Xr manpath 1 ,
+.Xr whatis 1
+.Sh STANDARDS
+The
+.Lb
+library is not a standard UNIX one.
+.Pp
+It tries to follow the PEP 8 style guide for Python code.
+.Sh PORTABILITY
+To be tested under Windows.
+.Sh HISTORY
+This library was made for the
+.Lk https://github.com/HubTou/PNU [PNU project]
+to factor code for the
+.Xr man 1
+and
+.Xr manpath 1
+commands.
+.Sh LICENSE
+It is available under the 3-clause BSD license.
+.Sh AUTHORS
+.An Hubert Tournier
+.Pp
+The
+.Xr man.conf 5
+manual page is largely based on the one written for
+.Fx
+by
+.An Gordon Tetlow
