@@ -1,4 +1,4 @@
-.Dd February 28, 2022
+.Dd March 5, 2022
 .Dt LIBMANCONF 3
 .Os
 .Sh NAME
@@ -10,6 +10,7 @@
 .Ft String, String, List
 .Fo libmanconf.read_man_conf_files
 .Fa "Integer debug_level = 0"
+.Fa "String manpath_so_far = ''"
 .Fc
 .Sh DESCRIPTION
 The
@@ -26,6 +27,11 @@ The function takes an optional argument
 .Fa debug_level
 with an integer value from 0 (default) to 3,
 to print increasingly detailed information on standard error output.
+.Pp
+It can also take another optional argument
+.Fa manpath_so_far
+with a colon separated string of already added directories to the manual path,
+in order to check for duplicate entries.
 .Pp
 It returns a triplet consisting of:
 .Bl -bullet

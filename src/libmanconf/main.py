@@ -10,11 +10,11 @@ import sys
 import libpnu
 
 # Version string used by the what(1) and ident(1) commands:
-ID = "@(#) $Id: libmanconf - library for handling man(1) and manpath(1) configuration files v1.0.1 (March 5, 2022) by Hubert Tournier $"
+ID = "@(#) $Id: libmanconf - library for handling man(1) and manpath(1) configuration files v1.1.0 (March 5, 2022) by Hubert Tournier $"
 
 
 ################################################################################
-def _read_configuration_file(filename, debug_level):
+def _read_configuration_file(filename, debug_level, manpath_so_far):
     """Read a man(1) and manpath(1) configuration file"""
     config = ""
     paths = ""
@@ -46,19 +46,27 @@ def _read_configuration_file(filename, debug_level):
                             print("--   MANPATH", file=sys.stderr)
                         if len(parts) == 2:
                             if os.path.isdir(parts[1]):
-                                if debug_level > 0:
-                                    print("--  Adding %s to manpath" % parts[1], file=sys.stderr)
-                                if paths:
-                                    paths += ":" + parts[1]
+                                if parts[1] in manpath_so_far.split(os.pathsep):
+                                    if debug_level > 0:
+                                        print("--  Skipping duplicate manpath entry %s" % parts[1], file=sys.stderr)
                                 else:
-                                    paths = parts[1]
+                                    if debug_level > 0:
+                                        print("--  Adding %s to manpath" % parts[1], file=sys.stderr)
+                                    if paths:
+                                        paths += os.pathsep + parts[1]
+                                    else:
+                                        paths = parts[1]
+                                    if manpath_so_far:
+                                        manpath_so_far += os.pathsep + parts[1]
+                                    else:
+                                        manpath_so_far = parts[1]
 
                     elif parts[0] == "MANLOCALE":
                         if debug_level > 2:
                             print("--   MANLOCALE", file=sys.stderr)
                         if len(parts) == 2:
                             if locales:
-                                locales += ":" + parts[1]
+                                locales += os.pathsep + parts[1]
                             else:
                                 locales = parts[1]
 
@@ -83,7 +91,7 @@ def _read_configuration_file(filename, debug_level):
 
 
 ################################################################################
-def read_man_conf_files(debug_level = 0):
+def read_man_conf_files(debug_level=0, manpath_so_far=""):
     """Return man(1) and manpath(1) configuration files data"""
     manconfig = ""
     manpaths = ""
@@ -92,14 +100,18 @@ def read_man_conf_files(debug_level = 0):
 
     if os.path.isdir("/etc"):
         manconfig, manpaths, manlocales, manprocessors = _read_configuration_file(
-            "/etc/man.conf", debug_level
+            "/etc/man.conf",
+            debug_level,
+            manpath_so_far,
         )
     else:
         dir_list = libpnu.locate_directory("etc")
         for directory in dir_list:
             if os.path.isfile(directory + os.sep + "man.conf"):
                 manconfig, manpaths, manlocales, manprocessors = _read_configuration_file(
-                    directory + os.sep + "man.conf", debug_level
+                    directory + os.sep + "man.conf",
+                    debug_level,
+                    manpath_so_far,
                 )
                 break
 
@@ -128,17 +140,25 @@ def read_man_conf_files(debug_level = 0):
         for root, _, files in os.walk(directory):
             for file in files:
                 if file.endswith(extension):
+                    complete_manpath = manpath_so_far
+                    if complete_manpath:
+                        complete_manpath += os.pathsep + manpaths
+                    else:
+                        complete_manpath = manpaths
+                        
                     _, paths, locales, processors = _read_configuration_file(
-                        root + os.sep + file, debug_level
+                        root + os.sep + file,
+                        debug_level,
+                        complete_manpath,
                     )
                     if paths:
                         if manpaths:
-                            manpaths += ":" + paths
+                            manpaths += os.pathsep + paths
                         else:
                             manpaths = paths
                     if locales:
                         if manlocales:
-                            manlocales += ":" + locales
+                            manlocales += os.pathsep + locales
                         else:
                             manlocales = locales
                     if processors:

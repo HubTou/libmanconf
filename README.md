@@ -9,7 +9,7 @@ libmanconf — library for handling man(1) and manpath(1) configuration files
 ## SYNOPSIS
 import **libmanconf**
 
-String, String, List *libmanconf*.**read_man_conf_files**(Integer *debug_level* = 0)
+String, String, List *libmanconf*.**read_man_conf_files**(Integer *debug_level* = 0, String *manpath_so_far* = '')
 
 ## DESCRIPTION
 The **read_man_conf_files()** function reads the configuration files located at "/etc/man.conf" and "/usr/local/etc/man.d/\*.conf"
@@ -17,6 +17,9 @@ to configure the manual search path, locales and utility set used by man(1) and 
 
 The function takes an optional argument *debug_level* with an integer value from 0 (default) to 3,
 to print increasingly detailed information on standard error output.
+
+It can also take another optional argument *manpath_so_far* with a colon separated string of already added directories to the manual path,
+in order to check for duplicate entries.
 
 It returns a triplet consisting of:
 * a string containing colon separated existing MANPATH directories
