@@ -10,7 +10,7 @@ import sys
 import libpnu
 
 # Version string used by the what(1) and ident(1) commands:
-ID = "@(#) $Id: libmanconf - library for handling man(1) and manpath(1) configuration files v1.1.0 (March 5, 2022) by Hubert Tournier $"
+ID = "@(#) $Id: libmanconf - library for handling man(1) and manpath(1) configuration files v1.1.1 (March 6, 2022) by Hubert Tournier $"
 
 
 ################################################################################
@@ -47,11 +47,11 @@ def _read_configuration_file(filename, debug_level, manpath_so_far):
                         if len(parts) == 2:
                             if os.path.isdir(parts[1]):
                                 if parts[1] in manpath_so_far.split(os.pathsep):
-                                    if debug_level > 0:
-                                        print("--  Skipping duplicate manpath entry %s" % parts[1], file=sys.stderr)
+                                    if debug_level > 1:
+                                        print("--   Skipping duplicate manpath entry %s" % parts[1], file=sys.stderr)
                                 else:
                                     if debug_level > 0:
-                                        print("--  Adding %s to manpath" % parts[1], file=sys.stderr)
+                                        print("--   Adding %s to manpath" % parts[1], file=sys.stderr)
                                     if paths:
                                         paths += os.pathsep + parts[1]
                                     else:
