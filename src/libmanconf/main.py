@@ -10,7 +10,7 @@ import sys
 import libpnu
 
 # Version string used by the what(1) and ident(1) commands:
-ID = "@(#) $Id: libmanconf - library for handling man(1) and manpath(1) configuration files v1.1.1 (March 6, 2022) by Hubert Tournier $"
+ID = "@(#) $Id: libmanconf - library for handling man(1) and manpath(1) configuration files v1.1.2 (March 6, 2022) by Hubert Tournier $"
 
 
 ################################################################################
@@ -30,20 +30,20 @@ def _read_configuration_file(filename, debug_level, manpath_so_far):
                 line = line.strip()
 
                 if debug_level > 1:
-                    print("--  %s" % line, file=sys.stderr)
+                    print("--   %s" % line, file=sys.stderr)
 
                 if line:
                     parts = line.split()
 
                     if parts[0] == "MANCONFIG":
                         if debug_level > 2:
-                            print("--   MANCONFIG", file=sys.stderr)
+                            print("--     MANCONFIG", file=sys.stderr)
                         if len(parts) == 2:
                             config = parts[1]
 
                     elif parts[0] == "MANPATH":
                         if debug_level > 2:
-                            print("--   MANPATH", file=sys.stderr)
+                            print("--     MANPATH", file=sys.stderr)
                         if len(parts) == 2:
                             if os.path.isdir(parts[1]):
                                 if parts[1] in manpath_so_far.split(os.pathsep):
@@ -63,7 +63,7 @@ def _read_configuration_file(filename, debug_level, manpath_so_far):
 
                     elif parts[0] == "MANLOCALE":
                         if debug_level > 2:
-                            print("--   MANLOCALE", file=sys.stderr)
+                            print("--     MANLOCALE", file=sys.stderr)
                         if len(parts) == 2:
                             if locales:
                                 locales += os.pathsep + parts[1]
@@ -80,12 +80,11 @@ def _read_configuration_file(filename, debug_level, manpath_so_far):
                         if len(parts) >= 2:
                             processors.append(parts[0] + "=" + " ".join(line.split()[1:]))
                             if debug_level > 2:
-                                print(parts[0])
-                                print("--   Parsed %s" % parts[0], file=sys.stderr)
+                                print("--     Parsed %s" % parts[0], file=sys.stderr)
 
                     elif line.startswith("#"):
                         if debug_level > 2:
-                            print("--   Comment", file=sys.stderr)
+                            print("--     Comment", file=sys.stderr)
 
     return config, paths, locales, processors
 
